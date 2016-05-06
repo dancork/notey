@@ -1,5 +1,5 @@
 const nextNoteID = (state = 0, action) => {
-  if (action.type === 'INCREMENT_NOTE_ID') {
+  if (action.type === 'ADD_NOTE') {
     return ++state
   }
   return state

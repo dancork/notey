@@ -14,9 +14,6 @@ const AddNoteButton = connect(
         type: 'ADD_NOTE',
         id: nextNoteID
       })
-      dispatch({
-        type: 'INCREMENT_NOTE_ID'
-      })
     }}>
       Add Note
     </button>

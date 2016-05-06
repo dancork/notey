@@ -1,6 +1,9 @@
 const selectedNoteID = (state = false, action) => {
-  if (action.type === 'CHANGE_SELECTED_NOTE') {
-    return action.id
+  switch (action.type) {
+    case 'ADD_NOTE':
+    case 'CHANGE_SELECTED_NOTE':
+      return action.id
+      break
   }
   return state
 }
