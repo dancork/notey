@@ -1,14 +1,21 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-let nextNoteID = 0
+const mapStateToProps = (state) => ({
+  nextNoteID: state.nextNoteID
+})
 
-const AddNoteButton = connect()(
-  ({ dispatch }) => (
+const AddNoteButton = connect(
+  mapStateToProps
+)(
+  ({ dispatch, nextNoteID }) => (
     <button onClick={() => {
       dispatch({
         type: 'ADD_NOTE',
-        id: nextNoteID++
+        id: nextNoteID
+      })
+      dispatch({
+        type: 'INCREMENT_NOTE_ID'
       })
     }}>
       Add Note
