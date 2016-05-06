@@ -10,11 +10,12 @@ const entry = {
 
 const output = {
   path: path.join(__dirname, '/dist'),
-  // filename: '[name]/index.js',
-  // chunkFilename: '[name]/[id].chunk.js',
   publicPath: '/'
 }
 
+const resolve = {
+  extensions: ['', '.js', '.jsx']
+}
 
 
 /**
@@ -57,6 +58,7 @@ const plugins = [
 module.exports = {
   entry,
   output,
+  resolve,
   module: { loaders },
   plugins,
   devtool: 'cheap-module-source-map',
