@@ -6,7 +6,6 @@ import { Provider } from 'react-redux'
 import App from './components/app'
 import reducers from './reducers'
 
-// COMPONENTS
 render(
   <Provider store={createStore(reducers)}>
     <App />
