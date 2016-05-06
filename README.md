@@ -1,1 +1,3 @@
-# Prototyping Native Language Landing Page
+# Notey
+
+A note taking application based on Redux
