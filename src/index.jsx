@@ -2,12 +2,17 @@ import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { createStore, combineReducers } from 'redux'
 
-function notes(state = [], action) {
+
+const timestamp = () => +new Date()
+
+// REDUCERS
+const notes = (state = [], action) => {
   if (action.type === 'ADD_NOTE') {
     return [
       ...state,
       {
-        id: action.id
+        id: action.id,
+        last_updated: timestamp()
       }
     ]
   }
@@ -16,7 +21,8 @@ function notes(state = [], action) {
       if (note.id !== action.id) return note
       return {
         ...note,
-        title: action.title
+        title: action.title,
+        last_updated: timestamp()
       }
     });
   }
@@ -25,36 +31,46 @@ function notes(state = [], action) {
       if (note.id !== action.id) return note
       return {
         ...note,
-        content: action.content
+        content: action.content,
+        last_updated: timestamp()
       }
     });
   }
   return state
 }
 
-function selectedNoteID(state = false, action) {
+const selectedNoteID = (state = false, action) => {
   if (action.type === 'CHANGE_SELECTED_NOTE') {
     return action.id
   }
   return state
 }
 
+const noteOrder = (state = 'UPDATED_DESC', action) => {
+  if (action.type === 'CHANGE_NOTE_ORDER') {
+    return action.order
+  }
+  return state
+}
+
 const store = createStore(combineReducers({
   notes,
-  selectedNoteID
+  selectedNoteID,
+  noteOrder
 }))
+
 let nextNoteID = 0
 
-const App = () => {
-  const { notes, selectedNoteID } = store.getState()
-  return (
-    <div className="app">
-      <AddNoteButton />
-      <NoteList />
-      {selectedNoteID !== false && <Note />}
-    </div>
-  )
-}
+
+
+// COMPONENTS
+const App = () => (
+  <div className="app">
+    <AddNoteButton />
+    <NoteList />
+    {store.getState().selectedNoteID !== false && <NoteEditor />}
+  </div>
+)
 
 const AddNoteButton = () => (
   <button
@@ -69,13 +85,25 @@ const AddNoteButton = () => (
   </button>
 )
 
+const orderer = (key, order = 'ASC') => (
+  (a,b) => {
+    if (a[key] < b[key]) return order === 'ASC' ? -1 : 1;
+    if (a[key] > b[key]) return order === 'ASC' ? 1 : -1;
+    return 0;
+  }
+)
+
 class NoteList extends Component {
   render() {
+    let orderedNoteIDs
+    switch (store.getState().noteOrder) {
+      case 'UPDATED_DESC':
+      default:
+        orderedNoteIDs = store.getState().notes.sort(orderer('last_updated','DESC')).map(n => n.id)
+    }
     return (
       <ul>
-        { store.getState().notes.map((n) => (
-          <NoteListItem id={n.id} key={n.id} />
-        )) }
+        {orderedNoteIDs.map((id) => ( <NoteListItem id={id} key={id} /> ))}
       </ul>
     )
   }
@@ -106,7 +134,7 @@ const ListItem = ({ onClick, children }) => (
   </li>
 )
 
-const Note = () => (
+const NoteEditor = () => (
   <div>
     <NoteTitle />
     <NoteContent />
@@ -157,9 +185,14 @@ const Content = ({ onChange, value }) => (
   <textarea onChange={(event) => { onChange (event) }} value={value} />
 )
 
+
+
+// RENDERER
 const renderApp = () => {
   render( <App />, document.getElementById('app') )
 }
 
+
+// SUBSCRIBE TO CHANGES
 store.subscribe(renderApp)
 renderApp()
