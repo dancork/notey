@@ -20,6 +20,15 @@ function notes(state = [], action) {
       }
     });
   }
+  if(action.type === 'UPDATE_NOTE_CONTENT') {
+    return state.map((note) => {
+      if (note.id !== action.id) return note
+      return {
+        ...note,
+        content: action.content
+      }
+    });
+  }
   return state
 }
 
@@ -69,16 +78,25 @@ function App() {
       {selectedNoteID !== false &&
       <div>
         <input
-          onKeyUp={(event) => {
+          onChange={(event) => {
             store.dispatch({
               type: 'UPDATE_NOTE_TITLE',
               id: selectedNoteID,
               title: event.currentTarget.value
             })
           }}
-          value={notes.filter((note) => { return note.id === selectedNoteID })[0].title}
+          value={notes.filter((note) => { return note.id === selectedNoteID })[0].title || ''}
         />
-        <textarea />
+        <textarea
+          onChange={(event) => {
+            store.dispatch({
+              type: 'UPDATE_NOTE_CONTENT',
+              id: selectedNoteID,
+              content: event.currentTarget.value
+            })
+          }}
+          value={notes.filter((note) => { return note.id === selectedNoteID })[0].content || ''}
+        />
       </div>
       }
     </div>
